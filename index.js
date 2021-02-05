@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-const minimist = require('minimist');
 const MongoClient = require('mongodb').MongoClient;
+const minimist = require('minimist');
 const url = require('url');
 
 const args = minimist(process.argv.slice(2));
@@ -30,6 +30,10 @@ if (!mongoUrlString) {
     noUrl();
 }
 
+const client = new MongoClient(mongoUrlString, {
+    useUnifiedTopology: true
+});
+
 const mongoUrl = url.parse(mongoUrlString);
 const serverName = `${mongoUrl.hostname}:${mongoUrl.port || 27017}`;
 
@@ -37,32 +41,27 @@ const serverName = `${mongoUrl.hostname}:${mongoUrl.port || 27017}`;
 // if the connection process needs more that this
 const warnIfConnectionNeedsMoreThanThis = 5000;
 
-const client = new MongoClient(mongoUrlString, {
-    useUnifiedTopology: true
-});
+const start = new Date();
+client.connect((error) => {
+    const end = new Date();
 
-(async () => {
-    try {
-        const start = new Date();
-        await client.connect();
-        const end = new Date();
-    
-        try {
-            client.close();  // close connection
-        } catch (___) { }
-    
-        const diff = end - start;  // measure time
-        if (diff > warnIfConnectionNeedsMoreThanThis) {
-            // needs a long time to connect
-    
-            console.log(`WARNING - Connecting to Mongo server ${serverName} need more than ${warnIfConnectionNeedsMoreThanThis}ms`);
-            process.exit(1);
-        }
-    
-        console.log(`OK - Mongo server ${serverName} is up`);
-        process.exit(0);
-    } catch (error) {
+    if (error) {
         console.log(`CRITICAL - Connection to Mongo server ${serverName} failed: ${error}`);
         process.exit(2);
     }
-})();
+
+    try {
+        client.close();  // close connection
+    } catch (___) { }
+
+    const diff = end - start;  // measure time
+    if (diff > warnIfConnectionNeedsMoreThanThis) {
+        // needs a long time to connect
+
+        console.log(`WARNING - Connecting to Mongo server ${serverName} need more than ${warnIfConnectionNeedsMoreThanThis}ms`);
+        process.exit(1);
+    }
+
+    console.log(`OK - Mongo server ${serverName} is up`);
+    process.exit(0);
+});
