@@ -1,6 +1,6 @@
 {
   "name": "icinga2-mongo-plugin",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "An Icinga2 plugin checking MongoDB compatible connections.",
   "main": "index.js",
   "scripts": {
