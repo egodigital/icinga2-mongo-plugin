@@ -21,9 +21,7 @@ const url = require('url');
 const args = minimist(process.argv.slice(2));
 
 function noUrl() {
-    console.warn('Please define a connection URL: ' + JSON.stringify(
-        [args]
-    ));
+    console.warn('Please define a connection URL');
     process.exit(2);
 }
 
@@ -39,29 +37,32 @@ const serverName = `${mongoUrl.hostname}:${mongoUrl.port || 27017}`;
 // if the connection process needs more that this
 const warnIfConnectionNeedsMoreThanThis = 5000;
 
-const start = new Date();
-MongoClient.connect(mongoUrlString, {
+const client = new MongoClient(mongoUrl, {
     useUnifiedTopology: true
-}, function (error, client) {
-    const end = new Date();
+});
 
-    if (error) {
+(async () => {
+    try {
+        const start = new Date();
+        await client.connect();
+        const end = new Date();
+    
+        try {
+            client.close();  // close connection
+        } catch (___) { }
+    
+        const diff = end - start;  // measure time
+        if (diff > warnIfConnectionNeedsMoreThanThis) {
+            // needs a long time to connect
+    
+            console.log(`WARNING - Connecting to Mongo server ${serverName} need more than ${warnIfConnectionNeedsMoreThanThis}ms`);
+            process.exit(1);
+        }
+    
+        console.log(`OK - Mongo server ${serverName} is up`);
+        process.exit(0);
+    } catch (error) {
         console.log(`CRITICAL - Connection to Mongo server ${serverName} failed: ${error}`);
         process.exit(2);
     }
-
-    try {
-        client.close();  // close connection
-    } catch (___) { }
-
-    const diff = end - start;  // measure time
-    if (diff > warnIfConnectionNeedsMoreThanThis) {
-        // needs a long time to connect
-
-        console.log(`WARNING - Connecting to Mongo server ${serverName} need more than ${warnIfConnectionNeedsMoreThanThis}ms`);
-        process.exit(1);
-    }
-
-    console.log(`OK - Mongo server ${serverName} is up`);
-    process.exit(0);
-});
+})();
