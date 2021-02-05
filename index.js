@@ -14,21 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+const minimist = require('minimist');
 const MongoClient = require('mongodb').MongoClient;
 const url = require('url');
 
-const args = process.argv.slice(2);
+const args = minimist(process.argv.slice(2));
 
 function noUrl() {
-    console.warn('Please define a connection URL!');
+    console.warn('Please define a connection URL: ' + JSON.stringify(
+        [args]
+    ));
     process.exit(2);
 }
 
-if (args.length < 1) {
-    noUrl();
-}
-
-const mongoUrlString = args[0].trim();
+const mongoUrlString = String(args['u'] || '').trim();
 if (!mongoUrlString) {
     noUrl();
 }

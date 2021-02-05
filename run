@@ -16,4 +16,4 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-node /usr/lib/nagios/plugins/icinga2-mongo-plugin/index.js "$@"
+/usr/bin/node /usr/lib/nagios/plugins/icinga2-mongo-plugin/index.js "$@"

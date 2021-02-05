@@ -1,6 +1,6 @@
 {
   "name": "icinga2-mongo-plugin",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An Icinga2 plugin checking MongoDB compatible connections.",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/egodigital/icinga2-mongo-plugin#readme",
   "dependencies": {
+    "minimist": "^1.2.5",
     "mongodb": "^3.6.4"
   }
 }
