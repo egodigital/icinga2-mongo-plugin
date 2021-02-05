@@ -16,7 +16,7 @@ First define a new command:
 
 ```
 object CheckCommand "check_mongo_connection" {
-  command = [ PluginDir + "/icinga2-mongo-plugin/run $host.vars.mongo_uri$" ]
+  command = [ PluginDir + "/icinga2-mongo-plugin/run", "-u", "$mongo_uri$" ]
 
   vars.mongo_uri = "$host.vars.mongo_uri$"
 }
@@ -29,5 +29,7 @@ object Host "some-mongo-host" {
   import "generic-host"
   
   check_command = "check_mongo_connection"
+
+  vars.mongo_uri = "<YOUR-MONGODB-URI>"
 }
 ```
