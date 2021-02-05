@@ -37,7 +37,7 @@ const serverName = `${mongoUrl.hostname}:${mongoUrl.port || 27017}`;
 // if the connection process needs more that this
 const warnIfConnectionNeedsMoreThanThis = 5000;
 
-const client = new MongoClient(mongoUrl, {
+const client = new MongoClient(mongoUrlString, {
     useUnifiedTopology: true
 });
 
